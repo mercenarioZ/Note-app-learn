@@ -1,7 +1,7 @@
 import { Button, Typography } from '@mui/material';
 import { GoogleAuthProvider, getAuth, signInWithPopup } from 'firebase/auth';
 import React, { useContext } from 'react';
-import { useNavigate, Navigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthProvider';
 import { graphQLRequest } from '../utils/request';
 
@@ -31,7 +31,7 @@ export default function Login() {
         console.log('register', { data });
     };
 
-    if (user?.uid) {
+    if (localStorage.getItem('accessToken')) {
         // navigate('/');
 
         // If don't use useEffect hook, avoid using useNavigate, use <Navigate /> component instead!
