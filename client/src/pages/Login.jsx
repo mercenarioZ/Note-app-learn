@@ -8,7 +8,7 @@ import { graphQLRequest } from '../utils/request';
 export default function Login() {
     const auth = getAuth();
 
-    const { user } = useContext(AuthContext);
+    // const { user } = useContext(AuthContext);
 
     // const navigate = useNavigate();
 

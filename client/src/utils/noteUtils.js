@@ -1,13 +1,13 @@
 import { graphQLRequest } from './request';
 
-export const notesLoader = async ({ params: { folderId } }) => {
-    const query = `query Folder($folderId: String) {
+export const notesLoader = async ({ params: { folderId } }) => { // Params are the content on the URL 
+    const query = `query Folder($folderId: String!) {
         folder(folderId: $folderId) {
             id
             name
             notes {
-                content
                 id
+                content
             }
         }
     }`;
@@ -29,6 +29,6 @@ export const noteLoader = async ({ params: { noteId } }) => {
         }
       }`;
 
-    const data = await graphQLRequest({ query, variables: { noteId } }); // Take in 2 args: options and payload
+    const data = await graphQLRequest({ query, variables: { noteId } });
     return data;
 };

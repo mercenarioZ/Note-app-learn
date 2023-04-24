@@ -26,7 +26,7 @@ const server = new ApolloServer({
     plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
 });
 
-await server.start();
+await server.start(); 
 
 const authorizationJWT = async (req, res, next) => {
     console.log({ authorization: req.headers.authorization }); // Debug
@@ -51,8 +51,6 @@ const authorizationJWT = async (req, res, next) => {
     } else {
         return res.status(401).json({ message: 'Unauthorized' });
     }
-
-    next();
 };
 
 app.use(

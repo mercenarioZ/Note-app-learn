@@ -26,7 +26,7 @@ export default function AuthProvider({ children }) {
                 return;
             }
 
-            //reset
+            //reset user info
             console.log('reset');
             setIsLoading(false);
             setUser({});
@@ -34,6 +34,7 @@ export default function AuthProvider({ children }) {
             navigate('/login');
         });
 
+        // Clean up function
         return () => {
             unsubscribed();
         };

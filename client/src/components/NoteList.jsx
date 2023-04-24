@@ -7,12 +7,6 @@ const NoteList = () => {
     // console.log({ noteId });
     const { folder } = useLoaderData();
     console.log('[Note List]', {folder})
-    // const folders = {
-    //     notes: [
-    //         { id: 445436, content: 'Note title a' },
-    //         { id: 130502, content: 'Đi chơi Nha Trang' },
-    //     ],
-    // };
     const [activeNoteId, setActiveNoteId] = useState(noteId);
 
     return (
