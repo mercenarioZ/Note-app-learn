@@ -21,14 +21,14 @@ export const addNewFolder = async (newFolder) => {
                 name
             }
         }
-    }`
+    }`;
 
     const data = await graphQLRequest({
-        query, 
+        query,
         variables: {
-            name: newFolder.name
-        }
-    })
+            name: newFolder.name,
+        },
+    });
 
-    return data
-}
+    return data;
+};

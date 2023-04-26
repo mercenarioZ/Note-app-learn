@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
     EditorState,
     convertFromHTML,
@@ -6,12 +6,14 @@ import {
     ContentState,
 } from 'draft-js';
 import { Editor } from 'react-draft-wysiwyg';
-import { draftToHtml } from 'draftjs-to-html';
-import { useLoaderData } from 'react-router-dom';
+import draftToHtml from 'draftjs-to-html';
+import { useLoaderData, useLocation, useSubmit } from 'react-router-dom';
+import { debounce } from '@mui/material';
 
 const Note = () => {
+    const location = useLocation();
+    const submit = useSubmit();
     const { note } = useLoaderData();
-    // console.log('[Note]',{note})
 
     const [editorState, setEditorState] = useState(() => {
         return EditorState.createEmpty();
@@ -29,6 +31,24 @@ const Note = () => {
         setEditorState(EditorState.createWithContent(state));
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [note.id]);
+
+    // console.log({location})
+
+    useEffect(() => {
+        debouncedMemo(rawHTML, note, location.pathname);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [rawHTML, location.pathname]);
+
+    const debouncedMemo = useMemo(() => {
+        return debounce((rawHTML, note, pathname) => {
+            if (rawHTML === note.content) return;
+
+            submit(
+                { ...note, content: rawHTML },
+                { method: 'post', action: pathname }
+            );
+        }, 1000);
+    }, []);
 
     useEffect(() => {
         setRawHTML(note.content);

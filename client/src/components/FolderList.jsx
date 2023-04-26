@@ -5,7 +5,7 @@ import NewFolder from './NewFolder';
 
 const FolderList = ({ folders }) => {
     const { folderId } = useParams();
-    console.log({ folderId });
+    // console.log({ folderId });
 
     const [activeFolderId, setActiveFolderId] = useState(folderId);
 

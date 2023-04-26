@@ -1,13 +1,58 @@
-import { Box, Card, CardContent, Grid, List, Typography } from '@mui/material';
-import React, { useState } from 'react';
-import { Link, Outlet, useParams, useLoaderData } from 'react-router-dom';
+import { NoteAddOutlined } from '@mui/icons-material';
+import {
+    Box,
+    Card,
+    CardContent,
+    Grid,
+    IconButton,
+    List,
+    Tooltip,
+    Typography,
+} from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import {
+    Link,
+    Outlet,
+    useParams,
+    useLoaderData,
+    useSubmit,
+    useNavigate
+} from 'react-router-dom';
 
 const NoteList = () => {
-    const { noteId } = useParams();
-    // console.log({ noteId });
+    const { noteId, folderId } = useParams();
     const { folder } = useLoaderData();
-    console.log('[Note List]', {folder})
     const [activeNoteId, setActiveNoteId] = useState(noteId);
+    const submit = useSubmit();
+    const navigate = useNavigate();
+
+    const handleAddNewNote = () => {
+        submit(
+            {
+                content: '',
+                folderId,
+            },
+
+            {
+                method: 'post',
+                action: `/folders/${folderId}`,
+            }
+        );
+    };
+
+    useEffect(() => {
+        if (noteId) {
+            setActiveNoteId(noteId);
+            return;
+        }
+
+        // Logic if folder has at least 1 note
+        if (folder?.notes?.[0]) { 
+            navigate(`note/${folder.notes[0].id}`) // Navigate to the first note of list
+        }
+        
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [noteId, folder.notes]);
 
     return (
         <Grid container height='100%'>
@@ -26,13 +71,27 @@ const NoteList = () => {
             >
                 <List
                     subheader={
-                        <Box>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                            }}
+                        >
                             <Typography
                                 variant='h5'
                                 sx={{ fontWeight: 'bold' }}
                             >
                                 Notes
                             </Typography>
+                            <Tooltip
+                                title='Add note'
+                                onClick={handleAddNewNote}
+                            >
+                                <IconButton>
+                                    <NoteAddOutlined />
+                                </IconButton>
+                            </Tooltip>
                         </Box>
                     }
                 >
@@ -67,7 +126,7 @@ const NoteList = () => {
                                             dangerouslySetInnerHTML={{
                                                 __html: `${
                                                     content.substring(0, 30) ||
-                                                    'Empty'
+                                                    'Untitled'
                                                 }`,
                                             }}
                                         />

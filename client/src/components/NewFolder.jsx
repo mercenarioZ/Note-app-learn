@@ -20,7 +20,7 @@ export default function NewFolder() {
     const [open, setOpen] = useState(false);
 
     const [searchParams, setSearchParams] = useSearchParams();
-    
+
     const popupName = searchParams.get('popup');
 
     const handleOpenPopup = () => {
@@ -29,10 +29,12 @@ export default function NewFolder() {
     };
 
     const handleClosePopup = () => {
-        setOpen(false);
         setNewFolderName('');
-        // setSearchParams({popup: ''})
-        navigate(-1)
+        navigate(-1);
+    };
+
+    const handleNewFolderNameChange = (e) => {
+        setNewFolderName(e.target.value);
     };
 
     const handleAddNewFolder = async () => {
@@ -40,10 +42,6 @@ export default function NewFolder() {
         console.log({ addFolder });
 
         handleClosePopup(); // Close the popup when folder has been created
-    };
-
-    const handleNewFolderNameChange = (e) => {
-        setNewFolderName(e.target.value);
     };
 
     useEffect(() => {
@@ -77,8 +75,8 @@ export default function NewFolder() {
                         variant='standard'
                         autoComplete='off'
                         sx={{ width: '400px' }}
-                        onChange={handleNewFolderNameChange}
                         value={newFolderName}
+                        onChange={handleNewFolderNameChange}
                     />
                 </DialogContent>
                 <DialogActions>
