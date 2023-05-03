@@ -63,6 +63,7 @@ export const resolvers = {
                 authorId: context.uid,
             });
             // console.log({ newFolder });
+            pubsub.publish('FOLDER_CREATED')
             await newFolder.save();
             return newFolder;
         },
@@ -90,4 +91,12 @@ export const resolvers = {
             return note;
         }
     },
+
+    Subscription: {
+        folderCreated: {
+            subscribe: () => {
+                pubsub.asyncIterator(['FOLDER_CREATED']);
+            }
+        }
+    }
 };

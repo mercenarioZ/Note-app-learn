@@ -48,6 +48,7 @@ const Note = () => {
                 { method: 'post', action: pathname }
             );
         }, 1000);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
@@ -64,6 +65,7 @@ const Note = () => {
             editorState={editorState}
             onEditorStateChange={handleOnChange}
             placeholder='Write some...'
+            style={{padding: '1px'}}
         />
     );
 };

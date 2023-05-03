@@ -30,4 +30,8 @@ type Mutation {
     addNote(content: String, folderId: ID!): Note,
     updateNote(content: String!, id: String!): Note,
     register(uid: String!, name: String!): Author
+}
+
+type Subscription {
+    folderCreated: Message
 }`;
