@@ -12,6 +12,12 @@ import mongoose from 'mongoose';
 import './firebaseConfig.js';
 import { resolvers } from './resolvers/index.js';
 import { typeDefs } from './schemas/index.js';
+import { makeExecutableSchema } from '@graphql-tools/schema';
+import { WebSocketServer } from 'ws';
+import { useServer } from 'graphql-ws/lib/use/ws.js';
+import { PubSub } from 'graphql-subscriptions';
+
+const pubsub = new PubSub();
 
 const app = express(); // Use Express framework
 const httpServer = http.createServer(app);
@@ -20,20 +26,49 @@ const URI = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}
 const PORT = process.env.PORT || 1210;
 
 // ApolloServer configuration
-const server = new ApolloServer({
-    typeDefs,
-    resolvers,
-    plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
+const schema = makeExecutableSchema({ typeDefs, resolvers });
+
+// Creating the WebSocket server
+const wsServer = new WebSocketServer({
+    // This is the `httpServer` we created in a previous step.
+    server: httpServer,
+    // Pass a different path here if app.use
+    // serves expressMiddleware at a different path
+    path: '/',
 });
 
-await server.start(); 
+// Hand in the schema we just created and have the
+// WebSocketServer start listening.
+const serverCleanup = useServer({ schema }, wsServer);
+
+const server = new ApolloServer({
+    // typeDefs,
+    // resolvers,
+    schema,
+    plugins: [
+        ApolloServerPluginDrainHttpServer({ httpServer }), 
+        
+        // Proper shutdown for the WebSocket server.
+        {
+            async serverWillStart() {
+                return {
+                    async drainServer() {
+                        await serverCleanup.dispose();
+                    },
+                };
+            },
+        },
+    ],
+});
+
+await server.start();
 
 const authorizationJWT = async (req, res, next) => {
     console.log({ authorization: req.headers.authorization }); // Debug
     const authorizationHeader = req.headers.authorization;
 
     if (authorizationHeader) {
-        const accessToken = authorizationHeader.split(' ')[1]; // Remove the 'Bearer' out of the string. 
+        const accessToken = authorizationHeader.split(' ')[1]; // Remove the 'Bearer' out of the string.
 
         getAuth()
             .verifyIdToken(accessToken)

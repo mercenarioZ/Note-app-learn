@@ -16,8 +16,9 @@ import {
     useParams,
     useLoaderData,
     useSubmit,
-    useNavigate
+    useNavigate,
 } from 'react-router-dom';
+import moment from 'moment';
 
 const NoteList = () => {
     const { noteId, folderId } = useParams();
@@ -47,11 +48,11 @@ const NoteList = () => {
         }
 
         // Logic if folder has at least 1 note
-        if (folder?.notes?.[0]) { 
-            navigate(`note/${folder.notes[0].id}`) // Navigate to the first note of list
+        if (folder?.notes?.[0]) {
+            navigate(`note/${folder.notes[0].id}`); // Navigate to the first note of list
         }
-        
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [noteId, folder.notes]);
 
     return (
@@ -95,7 +96,7 @@ const NoteList = () => {
                         </Box>
                     }
                 >
-                    {folder.notes.map(({ id, content }) => {
+                    {folder.notes.map(({ id, content, updatedAt }) => {
                         return (
                             <Link
                                 key={id}
@@ -130,6 +131,16 @@ const NoteList = () => {
                                                 }`,
                                             }}
                                         />
+                                        <Typography
+                                            sx={{
+                                                fontSize: '0.77rem',
+                                                fontStyle: 'italic',
+                                            }}
+                                        >
+                                            {moment(updatedAt).format(
+                                                'MMMM Do YYYY, h:mm:ss a'
+                                            )}
+                                        </Typography>
                                     </CardContent>
                                 </Card>
                             </Link>
